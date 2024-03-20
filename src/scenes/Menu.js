@@ -17,6 +17,8 @@ class Menu extends Phaser.Scene {
         this.load.image('shock','shock.png')
         this.load.image('hints','hints.png')
         this.load.image('fade','fade.png')
+        this.load.image('credits','credits.png')
+        this.load.image('tutorial','tutorial.png')
     }
 
     create() {
