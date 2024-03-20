@@ -229,6 +229,7 @@ class Lab extends Phaser.Scene {
         this.monsterTimer = 0
         this.monsterObstacles = 0
         this.picking = true
+        this.canclick = true
         this.door = null
         this.handle = null
         this.invitation = null
@@ -300,15 +301,17 @@ class Lab extends Phaser.Scene {
             //console.log(this.tickCount)
         } else if (this.picking) {
             this.picking = false
+            //this.canclick = false
             //Spawn one of three events: monster event (one chance), door event, or puzzle event
             //If you get puzzle event and don't have a monster event, you go to Invitation event
             //If you get monster event, you have a 20-second timer to NOT die (or be sent to menu)
             //If you get puzzle event in monster event, you gotta solve the box, for Invitation scene
             this.scenario = Math.random()
 
-            if (this.scenario < 0.8 && this.hasMonster == 0) {
+            if (this.scenario < 0.5 && this.hasMonster == 0) {
                 //Monster scenario!
                 console.log('monster time!')
+                this.monsterObstacles = 0
                 this.monster = this.add.sprite(screenX,screenY,'monster')
                 this.monster.setScale(0.001)
                 this.tweens.add({
@@ -330,11 +333,13 @@ class Lab extends Phaser.Scene {
                 }, null, this)
                 this.tickCount = -300
                 this.picking = true
+                //this.canclick = true
             } else if (this.monsterObstacles > 0 && this.scenario < 0.9) {
                 //Box in either monster attack or peaceful!
                 console.log('box time!')
                 if (this.hasMonster == 0) {
                     //not in crisis, insta-win, prompt box escape
+                    //this.canclick = true
                     this.box = this.add.sprite(screenX,screenY,'box')
                     this.box.setScale(0.001)
                     this.tweens.add({
@@ -464,11 +469,13 @@ class Lab extends Phaser.Scene {
 
         //console.log(this.door)
         if (this.picking == false && this.door) {
+            
             //console.log("this is the door!!!")
             
-            if (this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
+            if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
                 this.tickCount = 0
                 this.picking = true
+                this.canclick = false
                 this.monsterObstacles++
                 this.tweens.killAll()
                 this.tweens.add({
@@ -483,6 +490,7 @@ class Lab extends Phaser.Scene {
                         //this.picking = true
                         this.door.destroy()
                         console.log("it's time dude")
+                        this.canclick = true
                 }, null, this)
             }
         }
@@ -490,9 +498,10 @@ class Lab extends Phaser.Scene {
         if (this.picking == false && this.pb1) {
             //console.log("this is the door!!!")
             
-            if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
+            if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
                 //this.tickCount = 0
                 //this.picking = true
+                this.canclick = false
                 this.tweens.killAll()
                 this.tweens.add({
                     targets: [this.pb1, this.handleglow, this.puzzle],
@@ -507,6 +516,10 @@ class Lab extends Phaser.Scene {
                         this.pb1.destroy()
                         this.puzzle.destroy()
                         this.handleglow.destroy()
+                        this.pb1 = null
+                        this.puzzle = null
+                        this.handleglow = null
+                        console.log('first -puzzle cleared')
                         console.log("it's time dude")
                         this.puzzle = this.add.sprite(screenX,screenY,'side2')
                         this.puzzle.setScale(0.001)
@@ -552,6 +565,7 @@ class Lab extends Phaser.Scene {
                             repeat: -1,
                             yoyo: true
                         })
+                        this.canclick = true
                 }, null, this)
             }
         }
@@ -559,10 +573,11 @@ class Lab extends Phaser.Scene {
         if (this.picking == false && this.pb2) {
             //console.log("this is the door!!!")
             
-            if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
+            if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
                 //this.tickCount = 0
                 //this.picking = true
                 this.tweens.killAll()
+                this.canclick = false
                 this.tweens.add({
                     targets: [this.pb2, this.handleglow, this.puzzle],
                     scale: {from: 0.3, to: 0.001},
@@ -576,6 +591,10 @@ class Lab extends Phaser.Scene {
                         this.pb2.destroy()
                         this.puzzle.destroy()
                         this.handleglow.destroy()
+                        this.pb2 = null
+                        this.puzzle = null
+                        this.handleglow = null
+                        console.log('second -puzzle cleared')
                         console.log("it's time dude")
                         this.puzzle = this.add.sprite(screenX,screenY,'side3')
                         this.puzzle.setScale(0.001)
@@ -621,16 +640,18 @@ class Lab extends Phaser.Scene {
                             repeat: -1,
                             yoyo: true
                         })
+                        this.canclick = true
                 }, null, this)
             }
         }
 
-        if (this.picking == false && this.pb3) {
+        if (this.canclick && this.picking == false && this.pb3) {
             //console.log("this is the door!!!")
             
             if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
                 //this.tickCount = 0
                 //this.picking = true
+                this.canclick = false
                 this.tweens.killAll()
                 this.scene.start('inviteScene')
             }

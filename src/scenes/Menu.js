@@ -15,6 +15,8 @@ class Menu extends Phaser.Scene {
         this.load.image('box','box.png')
         this.load.image('circle','circle.png')
         this.load.image('shock','shock.png')
+        this.load.image('hints','hints.png')
+        this.load.image('fade','fade.png')
     }
 
     create() {
@@ -29,8 +31,8 @@ class Menu extends Phaser.Scene {
         this.pinRing = new Phaser.Geom.Circle(buttonX,pinY,h/14)
 
 
-        this.poster = this.add.sprite(screenX,screenY,'poster')
-        this.poster.setScale(0.7)
+        this.poster = this.add.sprite(screenX,screenY-32,'poster')
+        this.poster.setScale(0.5)
         
         //boxemitter
         this.boxEmitter = this.add.particles(0, 0, 'button2', {
@@ -193,6 +195,15 @@ class Menu extends Phaser.Scene {
 
 
         this.tickCount = 0
+
+
+        this.hintbox = this.add.tileSprite(screenX,pinY,512,128,'hints')
+        this.hintbox.setScale(0.6)
+        this.hintbox.tilePositionX -= 250
+        this.cover1 = this.add.sprite(screenX+(256*0.6),pinY,'fade')
+        this.cover2 = this.add.sprite(screenX-(256*0.6),pinY,'fade')
+        this.cover2.setAngle(180)
+        //this.posticon.setTint(0xFF9999)
     }
     inbounds(obj1, obj2) {
         this.theradius = 45
@@ -221,6 +232,8 @@ class Menu extends Phaser.Scene {
         return false
     }
     update() {
+        this.hintbox.tilePositionX += 1
+        
         if (this.tickCount < 100) {
             this.tickCount++
             this.poster.setAlpha(this.tickCount/100)
