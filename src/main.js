@@ -3,7 +3,8 @@
 // Date: 03/19/2024
 
 // Components
-// PARTICLE EFFECTS, TWEENS, TIMERS, TILESPRITE, 
+// PARTICLE EFFECTS, TWEENS, TIMERS, TILESPRITE, TEXT OBJECTS
+// because it's for training reasons, I think the font is fine
 
 // Brief description (mostly for myself):
 // --Game is a rough recreation of "Hellworld" from that Hellraiser sequel
@@ -34,7 +35,7 @@ let config = {
     pixelArt: true,
     width: 640,
     height: 480,
-    scene: [ Menu, Lab, Invite ]
+    scene: [ Menu, Lab, LabEasy, Invite ]
 }
 
 const game = new Phaser.Game(config)

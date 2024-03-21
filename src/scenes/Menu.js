@@ -236,6 +236,8 @@ class Menu extends Phaser.Scene {
         this.music.play()
         this.music.volume = 0.4
         this.music.loop = true
+        this.difficultytick = 0
+        this.difficultytext = null
     }
     inbounds(obj1, obj2) {
         this.theradius = 45
@@ -316,7 +318,11 @@ class Menu extends Phaser.Scene {
                     this.sound.play('thud')
                     
                     this.music.stop()
-                    this.scene.start('labyrinthScene')
+                    if (this.difficulty == 0) {
+                        this.scene.start('labyrinthScene')
+                    } else {
+                        this.scene.start('easyLabyrinthScene')
+                    }
                     //add other difficulty, the visible timers version
                 }
     
@@ -335,8 +341,20 @@ class Menu extends Phaser.Scene {
     
                 else if (this.inbounds(this.input.mousePointer.position, this.boxRing)) {
                     this.boxEmitter.emitParticle()
-                    if (this.input.mousePointer.leftButtonDown()) {
+                    this.difficultytick++
+                    if (this.input.mousePointer.leftButtonDown() && this.difficultytick > 20) {
                         //toggle difficulty
+                        if (this.difficulty == 0) {
+                            this.difficulty = 1
+                            this.difficultytick = 0
+                            this.difficultytext = this.add.text(screenX - 70, boxY - 30, 'EASY MODE')
+                            
+                            this.difficultytext.setFontSize(30)
+                        } else {
+                            this.difficulty = 0
+                            this.difficultytick = 0
+                            this.difficultytext.destroy()
+                        }
                         this.sound.play('thud')
                     }
                 }
