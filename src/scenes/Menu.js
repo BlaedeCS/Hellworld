@@ -206,6 +206,16 @@ class Menu extends Phaser.Scene {
         this.cover2 = this.add.sprite(screenX-(256*0.6),pinY,'fade')
         this.cover2.setAngle(180)
         //this.posticon.setTint(0xFF9999)
+
+        this.creditson = false
+        this.creditstick = 0
+        this.tutorialon = false
+        this.tutorialtick = 0
+        this.difficulty = 0
+
+        this.credits = null
+        this.tutorial = null
+
     }
     inbounds(obj1, obj2) {
         this.theradius = 45
@@ -241,11 +251,66 @@ class Menu extends Phaser.Scene {
             this.poster.setAlpha(this.tickCount/100)
             //console.log(this.tickCount)
         } else {
-            this.doorEmitter.emitParticle()
-            
-            if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.doorRing)) {
-                this.scene.start('labyrinthScene')
+
+            if (this.creditson) {
+                this.tutorialtick += 1
+                if (this.input.mousePointer.leftButtonDown() && this.tutorialtick >= 50) {
+                    this.creditson = false
+                    this.tickCount = 80
+                    if (this.credits != null) {
+                        this.credits.destroy()
+                    }
+                }
             }
+            else if (this.tutorialon) {
+                this.tutorialtick += 1
+                if (this.input.mousePointer.leftButtonDown() && this.tutorialtick >= 50) {
+                    this.tutorialon = false
+                    this.tickCount = 80
+                    if (this.tutorial != null) {
+                        this.tutorial.destroy()
+                    }
+                }
+            }
+            else {
+                this.doorEmitter.emitParticle()
+            
+                if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.doorRing)) {
+                    this.scene.start('labyrinthScene')
+                    //add other difficulty, the visible timers version
+                }
+    
+                else if (this.inbounds(this.input.mousePointer.position, this.postRing)) {
+                    this.postEmitter.emitParticle()
+                    if (this.input.mousePointer.leftButtonDown()) {
+                        //open tutorial
+                        this.tutorialon = true
+                        this.tutorialtick = 0
+                        this.tutorial = this.add.sprite(screenX,screenY,'tutorial')
+                        this.tutorial.setScale(0.7)
+                        
+                    }
+                }
+    
+                else if (this.inbounds(this.input.mousePointer.position, this.boxRing)) {
+                    this.boxEmitter.emitParticle()
+                    if (this.input.mousePointer.leftButtonDown()) {
+                        //toggle difficulty
+                    }
+                }
+    
+                else if (this.inbounds(this.input.mousePointer.position, this.pinRing)) {
+                    this.pinEmitter.emitParticle()
+                    if (this.input.mousePointer.leftButtonDown()) {
+                        //open credits
+                        this.creditson = true
+                        this.tutorialtick = 0
+                        this.credits = this.add.sprite(screenX,screenY,'credits')
+                        this.credits.setScale(0.7)
+                    }
+                }
+            }
+            
         }
         //repeating stuff
         //this.boxEmitter.emitParticle()
