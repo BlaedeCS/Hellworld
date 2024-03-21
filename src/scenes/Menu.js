@@ -19,6 +19,20 @@ class Menu extends Phaser.Scene {
         this.load.image('fade','fade.png')
         this.load.image('credits','credits.png')
         this.load.image('tutorial','tutorial.png')
+
+        // load audio
+        this.load.audio('deal','deal.wav')
+        this.load.audio('growl','growl.wav')
+        this.load.audio('hover','hover.wav')
+        this.load.audio('line1','line1.wav')
+        this.load.audio('line2','line2.wav')
+        this.load.audio('line3','line3.wav')
+        this.load.audio('loss','loss.wav')
+        this.load.audio('screech','screech.wav')
+        this.load.audio('theme1','theme1.wav')
+        this.load.audio('thud','thud.wav')
+        this.load.audio('thud2','thud2.wav')
+        this.load.audio('win','win.wav')
     }
 
     create() {
@@ -215,7 +229,13 @@ class Menu extends Phaser.Scene {
 
         this.credits = null
         this.tutorial = null
+        this.audiotick = 0
 
+        this.music = this.sound.add('theme1')
+
+        this.music.play()
+        this.music.volume = 0.4
+        this.music.loop = true
     }
     inbounds(obj1, obj2) {
         this.theradius = 45
@@ -245,7 +265,22 @@ class Menu extends Phaser.Scene {
     }
     update() {
         this.hintbox.tilePositionX += 1
-        
+        this.audiotick++
+        if (this.audiotick > 50) {
+            this.songchance = Math.random()
+            if (this.songchance < 0.1) {
+                this.sound.play('line1')
+                this.audiotick = -300
+            } else if (this.songchance < 0.2) {
+                this.sound.play('line2')
+                this.audiotick = -300
+            } else if (this.songchance < 0.3) {
+                this.sound.play('line3')
+                this.audiotick = -300
+            } 
+        }
+
+
         if (this.tickCount < 100) {
             this.tickCount++
             this.poster.setAlpha(this.tickCount/100)
@@ -257,6 +292,7 @@ class Menu extends Phaser.Scene {
                 if (this.input.mousePointer.leftButtonDown() && this.tutorialtick >= 50) {
                     this.creditson = false
                     this.tickCount = 80
+                    this.sound.play('thud')
                     if (this.credits != null) {
                         this.credits.destroy()
                     }
@@ -267,6 +303,7 @@ class Menu extends Phaser.Scene {
                 if (this.input.mousePointer.leftButtonDown() && this.tutorialtick >= 50) {
                     this.tutorialon = false
                     this.tickCount = 80
+                    this.sound.play('thud')
                     if (this.tutorial != null) {
                         this.tutorial.destroy()
                     }
@@ -276,6 +313,9 @@ class Menu extends Phaser.Scene {
                 this.doorEmitter.emitParticle()
             
                 if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.doorRing)) {
+                    this.sound.play('thud')
+                    
+                    this.music.stop()
                     this.scene.start('labyrinthScene')
                     //add other difficulty, the visible timers version
                 }
@@ -284,6 +324,7 @@ class Menu extends Phaser.Scene {
                     this.postEmitter.emitParticle()
                     if (this.input.mousePointer.leftButtonDown()) {
                         //open tutorial
+                        this.sound.play('thud')
                         this.tutorialon = true
                         this.tutorialtick = 0
                         this.tutorial = this.add.sprite(screenX,screenY,'tutorial')
@@ -296,6 +337,7 @@ class Menu extends Phaser.Scene {
                     this.boxEmitter.emitParticle()
                     if (this.input.mousePointer.leftButtonDown()) {
                         //toggle difficulty
+                        this.sound.play('thud')
                     }
                 }
     
@@ -303,6 +345,7 @@ class Menu extends Phaser.Scene {
                     this.pinEmitter.emitParticle()
                     if (this.input.mousePointer.leftButtonDown()) {
                         //open credits
+                        this.sound.play('thud')
                         this.creditson = true
                         this.tutorialtick = 0
                         this.credits = this.add.sprite(screenX,screenY,'credits')

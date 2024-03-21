@@ -11,6 +11,10 @@ class Invite extends Phaser.Scene {
 
     create() {
         // also stuff
+        this.music = this.sound.add('theme1')
+        this.music.play()
+        this.music.volume = 0.4
+        this.music.loop = true
         this.gfx = this.add.graphics()
 
         //doorrange
@@ -221,6 +225,8 @@ class Invite extends Phaser.Scene {
             this.doorEmitter.emitParticle()
             
             if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.doorRing)) {
+                this.music.stop()
+                this.sound.play('thud')
                 this.scene.start('menuScene')
             }
         }

@@ -20,6 +20,10 @@ class Lab extends Phaser.Scene {
 
     create() {
         // also stuff
+        this.music = this.sound.add('theme1')
+        this.music.play()
+        this.music.volume = 0.4
+        this.music.loop = true
         this.gfx = this.add.graphics()
 
         //doorrange
@@ -333,6 +337,8 @@ class Lab extends Phaser.Scene {
                 this.evilclock = this.time.delayedCall(20000, () => {
                     if (this.hasMonster > 0) {
                         //GAME OVER
+                        this.music.stop()
+                        this.sound.play('loss')
                         this.scene.start('menuScene')
                     }
                 }, null, this)
@@ -437,7 +443,7 @@ class Lab extends Phaser.Scene {
                 if (this.offsetscenario < 0.5 && this.hasMonster > 0) {
                     //PIN IS IN FRONT OF THIS DOOR!!!!!
                     
-
+                    this.sound.play('deal')
                     this.door = this.add.sprite(screenX,screenY,'door')
                     this.door.setScale(0.001)
                     this.tweens.add({
@@ -525,6 +531,7 @@ class Lab extends Phaser.Scene {
                 this.pinEmitter.emitParticle()
                 if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
                     this.tickCount = 0
+                    this.sound.play('thud')
                     this.picking = true
                     this.canclick = false
                     this.monsterObstacles++
@@ -548,10 +555,13 @@ class Lab extends Phaser.Scene {
                 }
                 else if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.pinRing)) {
                     //Clicking pin button
+                    this.sound.play('thud')
                     this.evilclock.destroy()
                     this.evilclock = this.time.delayedCall(30000, () => {
                         if (this.hasMonster > 0) {
                             //GAME OVER
+                            this.music.stop()
+                            this.sound.play('loss')
                             this.scene.start('menuScene')
                         }
                     }, null, this)
@@ -582,6 +592,7 @@ class Lab extends Phaser.Scene {
             else {
                 if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
                     this.tickCount = 0
+                    this.sound.play('thud')
                     this.picking = true
                     this.canclick = false
                     this.monsterObstacles++
@@ -612,8 +623,11 @@ class Lab extends Phaser.Scene {
             }
             if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
                 this.survivalchance = Math.random()
+                this.sound.play('thud')
                 if (this.pinheadactive && this.survivalchance < 0.5) {
                     //GAME OVER
+                    this.music.stop()
+                    this.sound.play('loss')
                     this.scene.start('menuScene')
                 }
                 
@@ -688,6 +702,7 @@ class Lab extends Phaser.Scene {
             } else if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.boxRing)) {
                 //Sacrificing the puzzle to ease pinhead
                 this.canclick = false
+                this.sound.play('thud')
                 this.pinheadactive = false
                 this.tweens.killAll()
                 this.tweens.add({
@@ -722,6 +737,7 @@ class Lab extends Phaser.Scene {
                 //this.tickCount = 0
                 //this.picking = true
                 this.tweens.killAll()
+                this.sound.play('thud')
                 this.canclick = false
                 this.tweens.add({
                     targets: [this.pb2, this.handleglow, this.puzzle],
@@ -792,12 +808,15 @@ class Lab extends Phaser.Scene {
 
         if (this.canclick && this.picking == false && this.pb3) {
             //console.log("this is the door!!!")
-            
             if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
                 //this.tickCount = 0
                 //this.picking = true
+                this.sound.play('thud')
+                
                 this.canclick = false
                 this.tweens.killAll()
+                this.music.stop()
+                this.sound.play('win')
                 this.scene.start('inviteScene')
             }
         }
@@ -807,6 +826,10 @@ class Lab extends Phaser.Scene {
             this.doorEmitter.emitParticle()
             if (this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.doorRing)) {
                 this.invitation.destroy()
+                this.music.stop()
+                this.sound.play('thud')
+                this.sound.play('win')
+
                 this.scene.start('inviteScene')
                 
             }
@@ -826,6 +849,9 @@ class Lab extends Phaser.Scene {
             this.postEmitter.emitParticle()
             if (this.input.mousePointer.leftButtonDown()) {
                 //restart game
+                this.music.stop()
+                this.sound.play('thud')
+
                 this.scene.restart()
                 
             }
