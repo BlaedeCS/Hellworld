@@ -15,6 +15,7 @@ class Lab extends Phaser.Scene {
         this.load.image('invite1','invite1.png')
         this.load.image('handle2','handle2.png')
         this.load.image('handle3','handle3.png')
+        this.load.image('angrypin','angrypin.png')
     }
 
     create() {
@@ -236,6 +237,9 @@ class Lab extends Phaser.Scene {
         this.pb1 = null
         this.pb2 = null
         this.pb3 = null
+        this.angrypin = null
+        this.pinheadhere = 0
+        this.pinheadactive = false
         
     }
     inbounds(obj1, obj2) {
@@ -294,7 +298,7 @@ class Lab extends Phaser.Scene {
     update() {
         this.hellEmitter.emitParticle()
         this.bgEmitter.emitParticle()
-
+        
         if (this.tickCount < 100) {
             this.tickCount++
             //this.poster.setAlpha(this.tickCount/100)
@@ -307,6 +311,7 @@ class Lab extends Phaser.Scene {
             //If you get monster event, you have a 20-second timer to NOT die (or be sent to menu)
             //If you get puzzle event in monster event, you gotta solve the box, for Invitation scene
             this.scenario = Math.random()
+            this.offsetscenario = Math.random()
 
             if (this.scenario < 0.5 && this.hasMonster == 0) {
                 //Monster scenario!
@@ -325,7 +330,7 @@ class Lab extends Phaser.Scene {
                     hold: 2000
                 })
                 this.hasMonster++
-                this.clock = this.time.delayedCall(20000, () => {
+                this.evilclock = this.time.delayedCall(20000, () => {
                     if (this.hasMonster > 0) {
                         //GAME OVER
                         this.scene.start('menuScene')
@@ -334,7 +339,7 @@ class Lab extends Phaser.Scene {
                 this.tickCount = -300
                 this.picking = true
                 //this.canclick = true
-            } else if (this.monsterObstacles > 0 && this.scenario < 0.9) {
+            } else if (this.monsterObstacles > 0 && this.scenario < 0.9 && this.offsetscenario < 0.4) {
                 //Box in either monster attack or peaceful!
                 console.log('box time!')
                 if (this.hasMonster == 0) {
@@ -427,39 +432,84 @@ class Lab extends Phaser.Scene {
                 
             } else {
                 //Door scenario!
-                console.log('open time!')
-                this.door = this.add.sprite(screenX,screenY,'door')
-                this.door.setScale(0.001)
-                this.tweens.add({
-                    targets: this.door,
-                    scale: {from: 0.001, to: 0.5},
-                    angle: {from: 0, to: 720},
-                    ease: 'Sine.easeIn',
-                    duration: 1000,
-                    repeat: 0
-                })
+                //Check if pinhead occupies door or not
 
-                this.handleglow = this.add.sprite(screenX,screenY,'handle3')
-                this.handleglow.setScale(0.001)
-                this.handle = this.add.sprite(screenX,screenY,'handle2')
-                this.handle.setScale(0.001)
+                if (this.offsetscenario < 0.5 && this.hasMonster > 0) {
+                    //PIN IS IN FRONT OF THIS DOOR!!!!!
+                    
+
+                    this.door = this.add.sprite(screenX,screenY,'door')
+                    this.door.setScale(0.001)
+                    this.tweens.add({
+                        targets: this.door,
+                        scale: {from: 0.001, to: 0.5},
+                        angle: {from: 0, to: 720},
+                        ease: 'Sine.easeIn',
+                        duration: 1000,
+                        repeat: 0
+                    })
+
+                    this.handleglow = this.add.sprite(screenX,screenY,'handle3')
+                    this.handleglow.setScale(0.001)
+                    this.handle = this.add.sprite(screenX,screenY,'handle2')
+                    this.handle.setScale(0.001)
+                    
+                    this.angrypin = this.add.sprite(screenX,screenY,'angrypin')
+                    this.angrypin.setScale(0.001)
+                    this.pinheadhere = 1
+                    this.tweens.add({
+                        targets: [this.handle, this.handleglow, this.angrypin],
+                        scale: {from: 0.001, to: 0.5},
+                        angle: {from: 0, to: 720},
+                        ease: 'Sine.easeIn',
+                        duration: 1000,
+                        repeat: 0
+                    })
+                    this.tweens.add({
+                        targets: this.handleglow,
+                        alpha: {from: 0, to: 1},
+                        ease: 'Sine.easeInOut',
+                        duration: 300,
+                        repeat: -1,
+                        yoyo: true
+                    })
+                }
+                else {
+                    console.log('open time!')
+                    this.door = this.add.sprite(screenX,screenY,'door')
+                    this.door.setScale(0.001)
+                    this.tweens.add({
+                        targets: this.door,
+                        scale: {from: 0.001, to: 0.5},
+                        angle: {from: 0, to: 720},
+                        ease: 'Sine.easeIn',
+                        duration: 1000,
+                        repeat: 0
+                    })
+
+                    this.handleglow = this.add.sprite(screenX,screenY,'handle3')
+                    this.handleglow.setScale(0.001)
+                    this.handle = this.add.sprite(screenX,screenY,'handle2')
+                    this.handle.setScale(0.001)
+                    
+                    this.tweens.add({
+                        targets: [this.handle, this.handleglow],
+                        scale: {from: 0.001, to: 0.5},
+                        angle: {from: 0, to: 720},
+                        ease: 'Sine.easeIn',
+                        duration: 1000,
+                        repeat: 0
+                    })
+                    this.tweens.add({
+                        targets: this.handleglow,
+                        alpha: {from: 0, to: 1},
+                        ease: 'Sine.easeInOut',
+                        duration: 300,
+                        repeat: -1,
+                        yoyo: true
+                    })
+                }
                 
-                this.tweens.add({
-                    targets: [this.handle, this.handleglow],
-                    scale: {from: 0.001, to: 0.5},
-                    angle: {from: 0, to: 720},
-                    ease: 'Sine.easeIn',
-                    duration: 1000,
-                    repeat: 0
-                })
-                this.tweens.add({
-                    targets: this.handleglow,
-                    alpha: {from: 0, to: 1},
-                    ease: 'Sine.easeInOut',
-                    duration: 300,
-                    repeat: -1,
-                    yoyo: true
-                })
             }
 
             
@@ -471,34 +521,102 @@ class Lab extends Phaser.Scene {
         if (this.picking == false && this.door) {
             
             //console.log("this is the door!!!")
-            
-            if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
-                this.tickCount = 0
-                this.picking = true
-                this.canclick = false
-                this.monsterObstacles++
-                this.tweens.killAll()
-                this.tweens.add({
-                    targets: [this.handle, this.handleglow, this.door],
-                    scale: {from: 0.5, to: 0.001},
-                    angle: {from: 0, to: -720},
-                    ease: 'Sine.easeOut',
-                    duration: 1000,
-                    repeat: 0
-                })
-                this.clock = this.time.delayedCall(1000, () => {
-                        //this.picking = true
-                        this.door.destroy()
-                        console.log("it's time dude")
-                        this.canclick = true
-                }, null, this)
+            if (this.pinheadhere > 0) {
+                this.pinEmitter.emitParticle()
+                if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
+                    this.tickCount = 0
+                    this.picking = true
+                    this.canclick = false
+                    this.monsterObstacles++
+                    this.tweens.killAll()
+                    this.pinheadhere = 0
+                    this.tweens.add({
+                        targets: [this.handle, this.handleglow, this.door, this.angrypin],
+                        scale: {from: 0.5, to: 0.001},
+                        angle: {from: 0, to: -720},
+                        ease: 'Sine.easeOut',
+                        duration: 1000,
+                        repeat: 0
+                    })
+                    this.clock = this.time.delayedCall(1000, () => {
+                            //this.picking = true
+                            this.door.destroy()
+                            this.angrypin.destroy()
+                            console.log("it's time dude")
+                            this.canclick = true
+                    }, null, this)
+                }
+                else if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.pinRing)) {
+                    //Clicking pin button
+                    this.evilclock.destroy()
+                    this.evilclock = this.time.delayedCall(30000, () => {
+                        if (this.hasMonster > 0) {
+                            //GAME OVER
+                            this.scene.start('menuScene')
+                        }
+                    }, null, this)
+                    this.pinheadactive = true
+                    this.tickCount = 0
+                    this.picking = true
+                    this.canclick = false
+                    this.monsterObstacles++
+                    this.tweens.killAll()
+                    this.pinheadhere = 0
+                    this.tweens.add({
+                        targets: [this.handle, this.handleglow, this.door, this.angrypin],
+                        scale: {from: 0.5, to: 0.001},
+                        angle: {from: 0, to: -720},
+                        ease: 'Sine.easeOut',
+                        duration: 1000,
+                        repeat: 0
+                    })
+                    this.clock = this.time.delayedCall(1000, () => {
+                            //this.picking = true
+                            this.door.destroy()
+                            this.angrypin.destroy()
+                            console.log("it's time dude")
+                            this.canclick = true
+                    }, null, this)
+                }
             }
+            else {
+                if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds2(this.input.mousePointer.position, 280,268,15)) {
+                    this.tickCount = 0
+                    this.picking = true
+                    this.canclick = false
+                    this.monsterObstacles++
+                    this.tweens.killAll()
+                    this.tweens.add({
+                        targets: [this.handle, this.handleglow, this.door],
+                        scale: {from: 0.5, to: 0.001},
+                        angle: {from: 0, to: -720},
+                        ease: 'Sine.easeOut',
+                        duration: 1000,
+                        repeat: 0
+                    })
+                    this.clock = this.time.delayedCall(1000, () => {
+                            //this.picking = true
+                            this.door.destroy()
+                            console.log("it's time dude")
+                            this.canclick = true
+                    }, null, this)
+                }
+            }
+            
         }
 
         if (this.picking == false && this.pb1) {
             //console.log("this is the door!!!")
-            
+            if (this.pinheadactive) {
+                this.boxEmitter.emitParticle()
+            }
             if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.hellbg)) {
+                this.survivalchance = Math.random()
+                if (this.pinheadactive && this.survivalchance < 0.5) {
+                    //GAME OVER
+                    this.scene.start('menuScene')
+                }
+                
                 //this.tickCount = 0
                 //this.picking = true
                 this.canclick = false
@@ -565,6 +683,33 @@ class Lab extends Phaser.Scene {
                             repeat: -1,
                             yoyo: true
                         })
+                        this.canclick = true
+                }, null, this)
+            } else if (this.canclick && this.input.mousePointer.leftButtonDown() && this.inbounds(this.input.mousePointer.position, this.boxRing)) {
+                //Sacrificing the puzzle to ease pinhead
+                this.canclick = false
+                this.pinheadactive = false
+                this.tweens.killAll()
+                this.tweens.add({
+                    targets: [this.pb1, this.handleglow, this.puzzle],
+                    scale: {from: 0.3, to: 0.001},
+                    angle: {from: 0, to: -720},
+                    ease: 'Sine.easeOut',
+                    duration: 1000,
+                    repeat: 0
+                })
+                this.clock = this.time.delayedCall(1000, () => {
+                        //this.picking = true
+                        this.pb1.destroy()
+                        this.puzzle.destroy()
+                        this.handleglow.destroy()
+                        this.pb1 = null
+                        this.puzzle = null
+                        this.handleglow = null
+                        console.log('first -puzzle sacrificed')
+                        console.log("it's time dude")
+                        this.tickCount = 0
+                        this.picking = true
                         this.canclick = true
                 }, null, this)
             }
@@ -677,6 +822,13 @@ class Lab extends Phaser.Scene {
         this.bgEmitter3.emitParticle()
         this.bgEmitter4.emitParticle()
 
-        
+        if (this.inbounds(this.input.mousePointer.position, this.postRing)) {
+            this.postEmitter.emitParticle()
+            if (this.input.mousePointer.leftButtonDown()) {
+                //restart game
+                this.scene.restart()
+                
+            }
+        }
     }
 }
