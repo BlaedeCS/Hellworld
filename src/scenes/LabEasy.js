@@ -20,8 +20,7 @@ class LabEasy extends Phaser.Scene {
 
     create() {
         // also stuff
-        this.helptext = this.add.text(screenX - 70, boxY - 30, 'NO TIMER')
-        this.helptext.setFontSize(30)
+        
         this.music = this.sound.add('theme1')
         this.music.play()
         this.music.volume = 0.4
@@ -248,6 +247,8 @@ class LabEasy extends Phaser.Scene {
         this.pinheadactive = false
         this.timeticks = 0
         this.timeremaining = 30
+        this.helptext = this.add.text(screenX - 70, boxY - 30, 'NO TIMER')
+        this.helptext.setFontSize(30)
     }
     inbounds(obj1, obj2) {
         this.theradius = 45
@@ -315,7 +316,7 @@ class LabEasy extends Phaser.Scene {
             //update text
         }
         if (this.hasMonster) {
-            this.helptext.setText(toString(this.timeremaining))
+            this.helptext.setText(this.timeremaining)
         }
         if (this.tickCount < 100) {
             this.tickCount++
